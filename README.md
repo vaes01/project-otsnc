@@ -1,1 +1,1 @@
-Project to promote shows by independent bands, initially in the city of São Paulo and surrounding areas, with the potential for future expansion to other cities.
+Project to promote shows by independent bands, initially in the city of Sao Paulo and surrounding areas, with the potential for future expansion to other cities.

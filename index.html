@@ -2,148 +2,314 @@
 <html lang="pt-BR">
 
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Rock Shows</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
 </head>
+
 
 <body>
 
-  <header class="header">
-    <div class="container">
-      <h1>🎸 Rock Shows</h1>
-      <p>Encontre os próximos shows de rock</p>
-    </div>
-  </header>
+
+<header class="header">
+
+  <div class="container">
+
+    <h1>🎸 Rock Shows</h1>
+
+    <p>
+      Encontre os próximos shows
+    </p>
+
+  </div>
+
+</header>
 
 
-  <main class="container">
 
-    <!-- FILTERS -->
-
-    <section class="filters">
-
-      <div class="filter">
-        <label for="casa">Casa de Show</label>
-        <input
-          type="text"
-          id="casa"
-          placeholder="Digite o nome..."
-        >
-      </div>
+<main class="container">
 
 
-      <div class="filter">
-        <label for="cidade">Cidade</label>
-        <select id="cidade">
-          <option value="">Todas</option>
-        </select>
-      </div>
+  <!-- FILTERS -->
+
+  <section class="filters">
 
 
-      <div class="filter">
-        <label for="regiao">Região</label>
-        <select id="regiao">
-          <option value="">Todas</option>
-        </select>
-      </div>
+    <!-- CASA -->
 
+    <div class="filter">
 
-      <div class="filter">
-        <label for="bairro">Bairro</label>
-        <select id="bairro">
-          <option value="">Todos</option>
-        </select>
-      </div>
+      <label for="casaSelect">
+        Casa de Show
+      </label>
 
+      <select id="casaSelect">
 
-      <div class="filter">
-        <label for="endereco">Endereço</label>
-        <input
-          type="text"
-          id="endereco"
-          placeholder="Digite o endereço..."
-        >
-      </div>
+        <option value="">
+          Todas
+        </option>
 
-
-      <div class="filter">
-        <label for="instagram">Instagram</label>
-        <input
-          type="text"
-          id="instagram"
-          placeholder="@..."
-        >
-      </div>
-
-
-      <div class="filter">
-        <label for="data">Data</label>
-        <input
-          type="date"
-          id="data"
-        >
-      </div>
-
-
-      <div class="filter">
-        <label for="horario">Horário</label>
-        <input
-          type="text"
-          id="horario"
-          placeholder="Ex: 20:00"
-        >
-      </div>
-
-
-      <div class="filter">
-        <label for="bandas">Bandas</label>
-        <input
-          type="text"
-          id="bandas"
-          placeholder="Nome da banda..."
-        >
-      </div>
-
-    </section>
-
-
-    <div class="filter-actions">
-
-      <button id="clearFilters">
-        Limpar filtros
-      </button>
-
-      <span id="resultCount"></span>
+      </select>
 
     </div>
 
 
-    <!-- LOADING -->
+    <div class="filter">
 
-    <div id="loading">
-      Carregando shows...
+      <label for="casaSearch">
+        Buscar Casa de Show
+      </label>
+
+      <input
+        id="casaSearch"
+        type="text"
+        placeholder="Digite o nome..."
+        autocomplete="off"
+      >
+
+      <div
+        id="casaSuggestions"
+        class="suggestions"
+      ></div>
+
     </div>
 
 
-    <!-- SHOWS -->
+    <!-- CIDADE -->
 
-    <section id="shows" class="shows"></section>
+    <div class="filter">
 
+      <label for="cidade">
+        Cidade
+      </label>
 
-    <!-- NO RESULTS -->
+      <select id="cidade">
 
-    <div id="noResults" class="no-results hidden">
-      Nenhum show encontrado.
+        <option value="">
+          Todas
+        </option>
+
+      </select>
+
     </div>
 
-  </main>
+
+    <!-- REGIAO -->
+
+    <div class="filter">
+
+      <label for="regiao">
+        Região
+      </label>
+
+      <select id="regiao">
+
+        <option value="">
+          Todas
+        </option>
+
+      </select>
+
+    </div>
 
 
-  <script src="script.js"></script>
+    <!-- BAIRRO -->
+
+    <div class="filter">
+
+      <label for="bairro">
+        Bairro
+      </label>
+
+      <select id="bairro">
+
+        <option value="">
+          Todos
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- ENDERECO -->
+
+    <div class="filter">
+
+      <label for="endereco">
+        Endereço
+      </label>
+
+      <input
+        id="endereco"
+        type="text"
+        placeholder="Digite o endereço..."
+        autocomplete="off"
+      >
+
+      <div
+        id="enderecoSuggestions"
+        class="suggestions"
+      ></div>
+
+    </div>
+
+
+    <!-- INSTAGRAM -->
+
+    <div class="filter">
+
+      <label for="instagram">
+        Instagram
+      </label>
+
+      <input
+        id="instagram"
+        type="text"
+        placeholder="@..."
+        autocomplete="off"
+      >
+
+      <div
+        id="instagramSuggestions"
+        class="suggestions"
+      ></div>
+
+    </div>
+
+
+    <!-- DATA INICIAL -->
+
+    <div class="filter">
+
+      <label for="dataInicio">
+        Data inicial
+      </label>
+
+      <input
+        id="dataInicio"
+        type="date"
+      >
+
+    </div>
+
+
+    <!-- DATA FINAL -->
+
+    <div class="filter">
+
+      <label for="dataFim">
+        Data final
+      </label>
+
+      <input
+        id="dataFim"
+        type="date"
+      >
+
+    </div>
+
+
+    <!-- HORARIO -->
+
+    <div class="filter">
+
+      <label for="horario">
+        Horário
+      </label>
+
+      <input
+        id="horario"
+        type="text"
+        placeholder="Ex: 19:00"
+        autocomplete="off"
+      >
+
+      <div
+        id="horarioSuggestions"
+        class="suggestions"
+      ></div>
+
+    </div>
+
+
+    <!-- BANDAS -->
+
+    <div class="filter">
+
+      <label for="bandas">
+        Bandas
+      </label>
+
+      <input
+        id="bandas"
+        type="text"
+        placeholder="Nome da banda..."
+        autocomplete="off"
+      >
+
+      <div
+        id="bandasSuggestions"
+        class="suggestions"
+      ></div>
+
+    </div>
+
+
+  </section>
+
+
+
+  <div class="filter-actions">
+
+    <button id="clearFilters">
+      Limpar filtros
+    </button>
+
+    <span id="resultCount"></span>
+
+  </div>
+
+
+
+  <div id="loading">
+    Carregando shows...
+  </div>
+
+
+
+  <section
+    id="shows"
+    class="shows"
+  ></section>
+
+
+
+  <div
+    id="noResults"
+    class="no-results hidden"
+  >
+    Nenhum show encontrado.
+  </div>
+
+
+</main>
+
+
+
+<script src="script.js"></script>
 
 </body>
 
