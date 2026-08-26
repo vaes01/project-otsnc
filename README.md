@@ -1,0 +1,2 @@
+# project-otsnc
+Project to promote shows by independent bands, initially in the city of São Paulo and surrounding areas, with the potential for future expansion to other cities.
