@@ -1336,3 +1336,55 @@ body {
   }
 
 }
+
+
+/* testing below */
+
+.venue-registration {
+
+  display: inline-block;
+
+  margin-top: 18px;
+
+  padding: 11px 18px;
+
+  background: #e10600 !important;
+
+  color: #fff !important;
+
+  -webkit-text-fill-color: #fff !important;
+
+  text-decoration: none !important;
+
+  border: 1px solid #e10600 !important;
+
+  border-radius: 6px;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 14px;
+
+  font-weight: bold;
+
+  line-height: 1.4;
+
+  text-align: center;
+
+  -webkit-appearance: none;
+
+  appearance: none;
+
+}
+
+
+@media (max-width: 600px) {
+
+  .venue-registration {
+
+    display: block;
+
+    width: 100%;
+
+  }
+
+}
