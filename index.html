@@ -166,60 +166,78 @@
 
     </div>
 
+    <!-- DATA INICIAL E FINAL -->
 
-    <!-- INSTAGRAM -->
+    <div class="filter date-filter">
 
-    <div class="filter">
+  <label>
+    Período
+  </label>
 
-      <label for="instagram">
-        Instagram
-      </label>
+  <button
+    type="button"
+    id="dateRangeButton"
+    class="date-range-button"
+  >
+    📅 <span id="dateRangeText">Selecionar período</span>
+  </button>
 
-      <input
-        id="instagram"
-        type="text"
-        placeholder="@..."
-        autocomplete="off"
+
+  <div
+    id="datePicker"
+    class="date-picker hidden"
+  >
+
+    <div class="calendar-header">
+
+      <button
+        type="button"
+        id="previousMonth"
+        class="calendar-nav"
       >
+        ‹
+      </button>
 
-      <div
-        id="instagramSuggestions"
-        class="suggestions"
-      ></div>
+      <strong id="calendarMonth">
+        Agosto 2026
+      </strong>
+
+      <button
+        type="button"
+        id="nextMonth"
+        class="calendar-nav"
+      >
+        ›
+      </button>
 
     </div>
 
 
-    <!-- DATA INICIAL -->
+    <div
+      id="calendar"
+      class="calendar"
+    ></div>
 
-    <div class="filter">
 
-      <label for="dataInicio">
-        Data inicial
-      </label>
+    <div class="calendar-footer">
 
-      <input
-        id="dataInicio"
-        type="date"
+      <div id="dateSelectionStatus">
+        Selecione a data inicial
+      </div>
+
+      <button
+        type="button"
+        id="clearDateRange"
       >
+        Limpar
+      </button>
 
     </div>
 
+  </div>
 
-    <!-- DATA FINAL -->
+</div>
 
-    <div class="filter">
-
-      <label for="dataFim">
-        Data final
-      </label>
-
-      <input
-        id="dataFim"
-        type="date"
-      >
-
-    </div>
 
 
     <!-- HORARIO -->

@@ -1,9 +1,21 @@
 const API_URL =
   "https://script.google.com/macros/s/AKfycbxCWUIlsFmqVGfXeaTSVuWA9jUsDZuYcg8m91D_qrdVQtc7H_R_FrFU6oFddtp3por2/exec";
 
+
 let allShows = [];
 
 let filteredShows = [];
+
+
+// ==================================================
+// DATE RANGE
+// ==================================================
+
+let dateStart = null;
+
+let dateEnd = null;
+
+let calendarDate = new Date();
 
 
 // ==================================================
@@ -35,7 +47,6 @@ async function loadShows() {
 
     updateAllFilters();
 
-
     renderShows(
       filteredShows
     );
@@ -58,7 +69,7 @@ async function loadShows() {
 
 
 // ==================================================
-// GET CURRENT FILTERS
+// GET FILTERS
 // ==================================================
 
 function getFilters() {
@@ -99,23 +110,6 @@ function getFilters() {
         .toLowerCase()
         .trim(),
 
-    instagram:
-      document
-        .getElementById("instagram")
-        .value
-        .toLowerCase()
-        .trim(),
-
-    dataInicio:
-      document
-        .getElementById("dataInicio")
-        .value,
-
-    dataFim:
-      document
-        .getElementById("dataFim")
-        .value,
-
     horario:
       document
         .getElementById("horario")
@@ -138,6 +132,37 @@ function getFilters() {
 
 // ==================================================
 // APPLY FILTERS
+// ==================================================
+
+function applyFilters() {
+
+  const filters =
+    getFilters();
+
+
+  filteredShows =
+    allShows.filter(
+      show =>
+        matchesFilters(
+          show,
+          filters
+        )
+    );
+
+
+  updateAllFilters();
+
+
+  renderShows(
+    filteredShows
+  );
+
+}
+
+
+
+// ==================================================
+// MATCH FILTERS
 // ==================================================
 
 function matchesFilters(
@@ -176,13 +201,6 @@ function matchesFilters(
       .toLowerCase();
 
 
-  const instagram =
-    String(
-      show["Instagram"] || ""
-    )
-      .toLowerCase();
-
-
   const horario =
     String(
       show["Horário"] || ""
@@ -198,7 +216,7 @@ function matchesFilters(
 
 
 
-  // CASA DROPDOWN
+  // CASA
 
   if (
     filters.casa &&
@@ -217,7 +235,9 @@ function matchesFilters(
     filters.casaSearch &&
     !casa
       .toLowerCase()
-      .includes(filters.casaSearch)
+      .includes(
+        filters.casaSearch
+      )
   ) {
 
     return false;
@@ -280,21 +300,6 @@ function matchesFilters(
 
 
 
-  // INSTAGRAM
-
-  if (
-    filters.instagram &&
-    !instagram.includes(
-      filters.instagram
-    )
-  ) {
-
-    return false;
-
-  }
-
-
-
   // HORARIO
 
   if (
@@ -334,80 +339,26 @@ function matchesFilters(
 
 
   if (
-    filters.dataInicio
+    dateStart &&
+    showDate < dateStart
   ) {
 
-    const startDate =
-      parseInputDate(
-        filters.dataInicio
-      );
-
-
-    if (
-      showDate < startDate
-    ) {
-
-      return false;
-
-    }
+    return false;
 
   }
 
 
   if (
-    filters.dataFim
+    dateEnd &&
+    showDate > dateEnd
   ) {
 
-    const endDate =
-      parseInputDate(
-        filters.dataFim
-      );
-
-
-    if (
-      showDate > endDate
-    ) {
-
-      return false;
-
-    }
+    return false;
 
   }
 
 
-
   return true;
-
-}
-
-
-
-// ==================================================
-// FILTER DATA
-// ==================================================
-
-function applyFilters() {
-
-  const filters =
-    getFilters();
-
-
-  filteredShows =
-    allShows.filter(
-      show =>
-        matchesFilters(
-          show,
-          filters
-        )
-    );
-
-
-  updateAllFilters();
-
-
-  renderShows(
-    filteredShows
-  );
 
 }
 
@@ -421,13 +372,6 @@ function updateAllFilters() {
 
   const filters =
     getFilters();
-
-
-  /*
-   * Each filter's available
-   * options are calculated
-   * using all OTHER filters.
-   */
 
 
   updateSelect(
@@ -486,17 +430,11 @@ function updateSelect(
     select.value;
 
 
-  /*
-   * Create a copy of the filters
-   * without the filter belonging
-   * to this dropdown.
-   */
+  const otherFilters = {
+    ...filters,
 
-  const otherFilters =
-    {
-      ...filters,
-      [ignoredFilter]: ""
-    };
+    [ignoredFilter]: ""
+  };
 
 
   const availableShows =
@@ -569,11 +507,6 @@ function updateSelect(
   );
 
 
-  /*
-   * Keep the selected value
-   * if it is still available.
-   */
-
   if (
     values.includes(
       oldValue
@@ -585,7 +518,8 @@ function updateSelect(
 
   } else {
 
-    select.value = "";
+    select.value =
+      "";
 
   }
 
@@ -645,13 +579,6 @@ function setupAutocomplete(
         getFilters();
 
 
-      /*
-       * Suggestions are also
-       * restricted by the
-       * currently selected
-       * filters.
-       */
-
       const availableShows =
         allShows.filter(
           show =>
@@ -659,6 +586,7 @@ function setupAutocomplete(
               show,
               {
                 ...filters,
+
                 [getFilterName(property)]:
                   ""
               }
@@ -679,7 +607,9 @@ function setupAutocomplete(
               value =>
                 value
                   .toLowerCase()
-                  .includes(query)
+                  .includes(
+                    query
+                  )
             )
         )
       ];
@@ -694,55 +624,53 @@ function setupAutocomplete(
       );
 
 
-      const limited =
-        values.slice(0, 10);
+      values
+        .slice(0, 10)
+        .forEach(
+          value => {
+
+            const item =
+              document.createElement(
+                "div"
+              );
 
 
-      limited.forEach(
-        value => {
+            item.className =
+              "suggestion-item";
 
-          const item =
-            document.createElement(
-              "div"
+
+            item.textContent =
+              value;
+
+
+            item.addEventListener(
+              "click",
+              () => {
+
+                input.value =
+                  value;
+
+
+                suggestions.style.display =
+                  "none";
+
+
+                applyFilters();
+
+              }
             );
 
 
-          item.className =
-            "suggestion-item";
+            suggestions.appendChild(
+              item
+            );
 
-
-          item.textContent =
-            value;
-
-
-          item.addEventListener(
-            "click",
-            () => {
-
-              input.value =
-                value;
-
-
-              suggestions.style.display =
-                "none";
-
-
-              applyFilters();
-
-            }
-          );
-
-
-          suggestions.appendChild(
-            item
-          );
-
-        }
-      );
+          }
+        );
 
 
       suggestions.style.display =
-        limited.length
+        suggestions.children.length
           ? "block"
           : "none";
 
@@ -758,8 +686,12 @@ function setupAutocomplete(
     event => {
 
       if (
-        !input.contains(event.target) &&
-        !suggestions.contains(event.target)
+        !input.contains(
+          event.target
+        ) &&
+        !suggestions.contains(
+          event.target
+        )
       ) {
 
         suggestions.style.display =
@@ -789,9 +721,6 @@ function getFilterName(
 
     "Endereço":
       "endereco",
-
-    "Instagram":
-      "instagram",
 
     "Horário":
       "horario",
@@ -874,10 +803,6 @@ function renderShows(
   );
 
 
-  /*
-   * Sort by date and time.
-   */
-
   const sorted =
     [...shows].sort(
       (a, b) => {
@@ -942,21 +867,17 @@ function renderShows(
         <div class="show-content">
 
           <div class="show-date">
-
             ${escapeHTML(
               show["Data"] || ""
             )}
-
           </div>
 
 
           <h2>
-
             ${escapeHTML(
               show["Casa de Show"] ||
               "Local não informado"
             )}
-
           </h2>
 
 
@@ -979,46 +900,46 @@ function renderShows(
           </div>
 
 
-          <div class="show-info">
-
-            ${
-              show["Bairro"]
-                ? "🏘️ " +
-                  escapeHTML(
+          ${
+            show["Bairro"]
+              ? `
+                <div class="show-info">
+                  🏘️
+                  ${escapeHTML(
                     show["Bairro"]
-                  )
-                : ""
-            }
+                  )}
+                </div>
+              `
+              : ""
+          }
 
-          </div>
 
-
-          <div class="show-info">
-
-            ${
-              show["Endereço"]
-                ? "📌 " +
-                  escapeHTML(
+          ${
+            show["Endereço"]
+              ? `
+                <div class="show-info">
+                  📌
+                  ${escapeHTML(
                     show["Endereço"]
-                  )
-                : ""
-            }
+                  )}
+                </div>
+              `
+              : ""
+          }
 
-          </div>
 
-
-          <div class="show-info">
-
-            ${
-              show["Horário"]
-                ? "🕐 " +
-                  escapeHTML(
+          ${
+            show["Horário"]
+              ? `
+                <div class="show-info">
+                  🕐
+                  ${escapeHTML(
                     show["Horário"]
-                  )
-                : ""
-            }
-
-          </div>
+                  )}
+                </div>
+              `
+              : ""
+          }
 
 
           <div class="show-bands">
@@ -1040,18 +961,14 @@ function renderShows(
           ${
             instagram
               ? `
-
                 <a
                   class="instagram"
                   href="${instagram}"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-
                   Instagram
-
                 </a>
-
               `
               : ""
           }
@@ -1073,7 +990,7 @@ function renderShows(
 
 
 // ==================================================
-// DATE FUNCTIONS
+// DATE PARSING
 // ==================================================
 
 function parseDate(
@@ -1090,7 +1007,9 @@ function parseDate(
 
 
   const parts =
-    dateString.split("/");
+    String(
+      dateString
+    ).split("/");
 
 
   if (
@@ -1108,24 +1027,6 @@ function parseDate(
     Number(parts[2]),
     Number(parts[1]) - 1,
     Number(parts[0])
-  );
-
-}
-
-
-
-function parseInputDate(
-  value
-) {
-
-  const parts =
-    value.split("-");
-
-
-  return new Date(
-    Number(parts[0]),
-    Number(parts[1]) - 1,
-    Number(parts[2])
   );
 
 }
@@ -1212,7 +1113,7 @@ function formatInstagram(
 
 
 // ==================================================
-// ESCAPE HTML
+// HTML ESCAPE
 // ==================================================
 
 function escapeHTML(
@@ -1220,22 +1121,27 @@ function escapeHTML(
 ) {
 
   return String(value)
+
     .replace(
       /&/g,
       "&amp;"
     )
+
     .replace(
       /</g,
       "&lt;"
     )
+
     .replace(
       />/g,
       "&gt;"
     )
+
     .replace(
       /"/g,
       "&quot;"
     )
+
     .replace(
       /'/g,
       "&#039;"
@@ -1246,28 +1152,683 @@ function escapeHTML(
 
 
 // ==================================================
-// EVENTS
+// DATE RANGE CALENDAR
 // ==================================================
 
-document
-  .querySelectorAll(
-    ".filter select"
-  )
-  .forEach(
-    select => {
+function initDatePicker() {
 
-      select.addEventListener(
-        "change",
-        applyFilters
+  const button =
+    document.getElementById(
+      "dateRangeButton"
+    );
+
+  const picker =
+    document.getElementById(
+      "datePicker"
+    );
+
+
+  // Open / close calendar
+  button.addEventListener(
+    "click",
+    event => {
+
+      event.stopPropagation();
+
+      picker.classList.toggle(
+        "hidden"
+      );
+
+      if (
+        !picker.classList.contains(
+          "hidden"
+        )
+      ) {
+
+        renderCalendar();
+
+      }
+
+    }
+  );
+
+
+  // Close ONLY when clicking outside
+  document.addEventListener(
+    "click",
+    event => {
+
+      if (
+        !picker.contains(
+          event.target
+        ) &&
+        !button.contains(
+          event.target
+        )
+      ) {
+
+        picker.classList.add(
+          "hidden"
+        );
+
+      }
+
+    }
+  );
+
+
+  // Previous month
+  document
+    .getElementById(
+      "previousMonth"
+    )
+    .addEventListener(
+      "click",
+      event => {
+
+        event.stopPropagation();
+
+        calendarDate.setMonth(
+          calendarDate.getMonth() - 1
+        );
+
+        renderCalendar();
+
+      }
+    );
+
+
+  // Next month
+  document
+    .getElementById(
+      "nextMonth"
+    )
+    .addEventListener(
+      "click",
+      event => {
+
+        event.stopPropagation();
+
+        calendarDate.setMonth(
+          calendarDate.getMonth() + 1
+        );
+
+        renderCalendar();
+
+      }
+    );
+
+
+  // Clear date range
+  document
+    .getElementById(
+      "clearDateRange"
+    )
+    .addEventListener(
+      "click",
+      event => {
+
+        event.stopPropagation();
+
+        dateStart = null;
+
+        dateEnd = null;
+
+        updateDateRangeText();
+
+        renderCalendar();
+
+        applyFilters();
+
+      }
+    );
+
+
+  renderCalendar();
+
+}
+
+
+
+// ==================================================
+// RENDER CALENDAR
+// ==================================================
+
+function renderCalendar() {
+
+  const calendar =
+    document.getElementById(
+      "calendar"
+    );
+
+
+  const monthTitle =
+    document.getElementById(
+      "calendarMonth"
+    );
+
+
+  const year =
+    calendarDate.getFullYear();
+
+
+  const month =
+    calendarDate.getMonth();
+
+
+  const monthName =
+    new Intl.DateTimeFormat(
+      "pt-BR",
+      {
+        month: "long",
+        year: "numeric"
+      }
+    ).format(
+      calendarDate
+    );
+
+
+  monthTitle.textContent =
+    capitalizeFirstLetter(
+      monthName
+    );
+
+
+  calendar.innerHTML =
+    "";
+
+
+  const weekdays = [
+    "Dom",
+    "Seg",
+    "Ter",
+    "Qua",
+    "Qui",
+    "Sex",
+    "Sáb"
+  ];
+
+
+  weekdays.forEach(
+    day => {
+
+      const element =
+        document.createElement(
+          "div"
+        );
+
+
+      element.className =
+        "calendar-weekday";
+
+
+      element.textContent =
+        day;
+
+
+      calendar.appendChild(
+        element
       );
 
     }
   );
 
 
+  const firstDay =
+    new Date(
+      year,
+      month,
+      1
+    ).getDay();
+
+
+  const daysInMonth =
+    new Date(
+      year,
+      month + 1,
+      0
+    ).getDate();
+
+
+  /*
+   * Empty cells before
+   * the first day.
+   */
+
+  for (
+    let i = 0;
+    i < firstDay;
+    i++
+  ) {
+
+    const empty =
+      document.createElement(
+        "div"
+      );
+
+
+    empty.className =
+      "calendar-empty";
+
+
+    calendar.appendChild(
+      empty
+    );
+
+  }
+
+
+  /*
+   * Days
+   */
+
+  for (
+    let day = 1;
+    day <= daysInMonth;
+    day++
+  ) {
+
+    const date =
+      new Date(
+        year,
+        month,
+        day
+      );
+
+
+    const element =
+      document.createElement(
+        "button"
+      );
+
+
+    element.type =
+      "button";
+
+
+    element.className =
+      "calendar-day";
+
+
+    element.textContent =
+      day;
+
+
+    /*
+     * Selected start
+     */
+
+    if (
+      dateStart &&
+      sameDay(
+        date,
+        dateStart
+      )
+    ) {
+
+      element.classList.add(
+        "selected-start"
+      );
+
+    }
+
+
+    /*
+     * Selected end
+     */
+
+    if (
+      dateEnd &&
+      sameDay(
+        date,
+        dateEnd
+      )
+    ) {
+
+      element.classList.add(
+        "selected-end"
+      );
+
+    }
+
+
+    /*
+     * Date inside range
+     */
+
+    if (
+      dateStart &&
+      dateEnd &&
+      date > dateStart &&
+      date < dateEnd
+    ) {
+
+      element.classList.add(
+        "in-range"
+      );
+
+    }
+
+
+    /*
+     * Today
+     */
+
+    if (
+      sameDay(
+        date,
+        new Date()
+      )
+    ) {
+
+      element.classList.add(
+        "today"
+      );
+
+    }
+
+
+    element.addEventListener(
+  "click",
+  event => {
+
+    event.stopPropagation();
+
+    selectDate(
+      date
+    );
+
+  }
+);
+
+
+
+    calendar.appendChild(
+      element
+    );
+
+  }
+
+
+  updateDateSelectionStatus();
+
+}
+
+
+
+// ==================================================
+// SELECT DATE
+// ==================================================
+
+function selectDate(
+  date
+) {
+
+  /*
+   * FIRST CLICK
+   *
+   * Select the initial date
+   * and KEEP the calendar open.
+   */
+
+  if (
+    !dateStart ||
+    (
+      dateStart &&
+      dateEnd
+    )
+  ) {
+
+    dateStart =
+      new Date(date);
+
+    dateEnd =
+      null;
+
+
+    updateDateRangeText();
+
+    renderCalendar();
+
+    return;
+
+  }
+
+
+  /*
+   * SECOND CLICK
+   *
+   * Select the final date.
+   */
+
+  if (
+    date < dateStart
+  ) {
+
+    // If user clicks an earlier
+    // date, automatically swap them.
+
+    dateEnd =
+      new Date(dateStart);
+
+    dateStart =
+      new Date(date);
+
+  } else {
+
+    dateEnd =
+      new Date(date);
+
+  }
+
+
+  updateDateRangeText();
+
+  renderCalendar();
+
+  applyFilters();
+
+
+  /*
+   * Only close after the
+   * complete range is selected.
+   */
+
+  setTimeout(
+    () => {
+
+      document
+        .getElementById(
+          "datePicker"
+        )
+        .classList.add(
+          "hidden"
+        );
+
+    },
+    250
+  );
+
+}
+
+
+
+
+// ==================================================
+// DATE TEXT
+// ==================================================
+
+function updateDateRangeText() {
+
+  const element =
+    document.getElementById(
+      "dateRangeText"
+    );
+
+
+  if (
+    !dateStart
+  ) {
+
+    element.textContent =
+      "Selecionar período";
+
+    return;
+
+  }
+
+
+  if (
+    dateStart &&
+    !dateEnd
+  ) {
+
+    element.textContent =
+      formatDate(
+        dateStart
+      ) +
+      " — selecione a data final";
+
+    return;
+
+  }
+
+
+  element.textContent =
+    formatDate(
+      dateStart
+    ) +
+    " — " +
+    formatDate(
+      dateEnd
+    );
+
+}
+
+
+
+// ==================================================
+// SELECTION STATUS
+// ==================================================
+
+function updateDateSelectionStatus() {
+
+  const element =
+    document.getElementById(
+      "dateSelectionStatus"
+    );
+
+
+  if (
+    !dateStart
+  ) {
+
+    element.textContent =
+      "Selecione a data inicial";
+
+    return;
+
+  }
+
+
+  if (
+    dateStart &&
+    !dateEnd
+  ) {
+
+    element.textContent =
+      "Agora selecione a data final";
+
+    return;
+
+  }
+
+
+  element.textContent =
+    `${formatDate(
+      dateStart
+    )} — ${formatDate(
+      dateEnd
+    )}`;
+
+}
+
+
+
+// ==================================================
+// FORMAT DATE
+// ==================================================
+
+function formatDate(
+  date
+) {
+
+  return String(
+    date.getDate()
+  ).padStart(2, "0")
+    +
+    "/"
+    +
+    String(
+      date.getMonth() + 1
+    ).padStart(2, "0")
+    +
+    "/"
+    +
+    date.getFullYear();
+
+}
+
+
+
+// ==================================================
+// SAME DAY
+// ==================================================
+
+function sameDay(
+  a,
+  b
+) {
+
+  return (
+    a.getFullYear() ===
+      b.getFullYear() &&
+
+    a.getMonth() ===
+      b.getMonth() &&
+
+    a.getDate() ===
+      b.getDate()
+  );
+
+}
+
+
+
+// ==================================================
+// CAPITALIZE
+// ==================================================
+
+function capitalizeFirstLetter(
+  value
+) {
+
+  return (
+    value.charAt(0).toUpperCase() +
+    value.slice(1)
+  );
+
+}
+
+
+
+// ==================================================
+// INPUT EVENTS
+// ==================================================
+
 document
   .querySelectorAll(
-    ".filter input"
+    ".filter input, .filter select"
   )
   .forEach(
     input => {
@@ -1277,6 +1838,7 @@ document
         applyFilters
       );
 
+
       input.addEventListener(
         "change",
         applyFilters
@@ -1288,7 +1850,7 @@ document
 
 
 // ==================================================
-// CLEAR FILTERS
+// CLEAR EVERYTHING
 // ==================================================
 
 document
@@ -1327,10 +1889,26 @@ document
         )
         .forEach(
           suggestions => {
+
             suggestions.style.display =
               "none";
+
           }
         );
+
+
+      dateStart =
+        null;
+
+
+      dateEnd =
+        null;
+
+
+      updateDateRangeText();
+
+
+      renderCalendar();
 
 
       filteredShows =
@@ -1350,7 +1928,7 @@ document
 
 
 // ==================================================
-// AUTOCOMPLETE SETUP
+// AUTOCOMPLETE
 // ==================================================
 
 setupAutocomplete(
@@ -1368,13 +1946,6 @@ setupAutocomplete(
 
 
 setupAutocomplete(
-  "instagram",
-  "instagramSuggestions",
-  "Instagram"
-);
-
-
-setupAutocomplete(
   "horario",
   "horarioSuggestions",
   "Horário"
@@ -1386,6 +1957,14 @@ setupAutocomplete(
   "bandasSuggestions",
   "Bandas"
 );
+
+
+
+// ==================================================
+// DATE PICKER
+// ==================================================
+
+initDatePicker();
 
 
 
