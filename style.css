@@ -1388,3 +1388,37 @@ body {
   }
 
 }
+
+
+
+/* =========================================
+   CREDITS
+========================================= */
+
+.credits {
+  margin: 20px 0 50px;
+  padding: 25px 0;
+  border-top: 1px solid #333;
+  color: #888;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.credits h2 {
+  margin-bottom: 10px;
+  color: #ddd;
+  font-size: 18px;
+}
+
+.credits p {
+  margin-bottom: 8px;
+}
+
+.credits a {
+  color: #ff5b5b;
+  text-decoration: none;
+}
+
+.credits a:hover {
+  text-decoration: underline;
+}
