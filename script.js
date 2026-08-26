@@ -6,6 +6,15 @@ let allShows = [];
 
 let filteredShows = [];
 
+let availableMinPrice = 0;
+
+let availableMaxPrice = 500;
+
+let priceMin = null;
+
+let priceMax = null;
+
+
 
 // ==================================================
 // DATE RANGE
@@ -24,28 +33,59 @@ let calendarDate = new Date();
 
 async function loadShows() {
 
+  const loading =
+    document.getElementById("loading");
+
   try {
+
+    console.log("Loading shows...");
 
     const response =
       await fetch(API_URL);
 
 
     if (!response.ok) {
+
       throw new Error(
-        "Erro ao carregar os dados."
+        `HTTP error: ${response.status}`
       );
+
     }
 
 
-    allShows =
+    const data =
       await response.json();
+
+
+    console.log(
+      "Shows loaded:",
+      data
+    );
+
+
+    allShows =
+      Array.isArray(data)
+        ? data
+        : [];
 
 
     filteredShows =
       [...allShows];
 
 
+    /*
+     * IMPORTANT:
+     * Initialize price AFTER
+     * the data has loaded.
+     */
+
+    initializePriceFilter();
+
+    setupPriceFilter();
+
+
     updateAllFilters();
+
 
     renderShows(
       filteredShows
@@ -54,17 +94,19 @@ async function loadShows() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Error loading shows:",
+      error
+    );
 
 
-    document.getElementById(
-      "loading"
-    ).textContent =
-      "Não foi possível carregar os shows.";
+    loading.textContent =
+      "Erro ao carregar os shows. Veja o console para mais detalhes.";
 
   }
 
 }
+
 
 
 
@@ -80,13 +122,6 @@ function getFilters() {
       document
         .getElementById("casaSelect")
         .value,
-
-    casaSearch:
-      document
-        .getElementById("casaSearch")
-        .value
-        .toLowerCase()
-        .trim(),
 
     cidade:
       document
@@ -127,6 +162,7 @@ function getFilters() {
   };
 
 }
+
 
 
 
@@ -221,23 +257,6 @@ function matchesFilters(
   if (
     filters.casa &&
     casa !== filters.casa
-  ) {
-
-    return false;
-
-  }
-
-
-
-  // CASA SEARCH
-
-  if (
-    filters.casaSearch &&
-    !casa
-      .toLowerCase()
-      .includes(
-        filters.casaSearch
-      )
   ) {
 
     return false;
@@ -357,7 +376,39 @@ function matchesFilters(
 
   }
 
+  // PRICE
 
+const showPrice =
+  Number(
+    show["Preço do ingresso"]
+  );
+
+
+if (
+  priceMin !== null &&
+  (
+    !Number.isFinite(showPrice) ||
+    showPrice < priceMin
+  )
+) {
+
+  return false;
+
+}
+
+
+if (
+  priceMax !== null &&
+  (
+    !Number.isFinite(showPrice) ||
+    showPrice > priceMax
+  )
+) {
+
+  return false;
+
+}
+  
   return true;
 
 }
@@ -716,9 +767,6 @@ function getFilterName(
 
   const mapping = {
 
-    "Casa de Show":
-      "casaSearch",
-
     "Endereço":
       "endereco",
 
@@ -734,6 +782,7 @@ function getFilterName(
   return mapping[property] || "";
 
 }
+
 
 
 
@@ -844,7 +893,7 @@ function renderShows(
 
 
   sorted.forEach(
-    show => {
+    show => {   
 
       const card =
         document.createElement(
@@ -940,6 +989,23 @@ function renderShows(
               `
               : ""
           }
+
+          ${
+            show["Preço do ingresso"] !== "" &&
+            show["Preço do ingresso"] !== null &&
+            show["Preço do ingresso"] !== undefined
+                ? `
+                <div class="show-price">
+                    🎟️
+                    R$
+                    ${formatMoney(
+                    show["Preço do ingresso"]
+                    )}
+                </div>
+                `
+                : ""
+            }
+
 
 
           <div class="show-bands">
@@ -1931,12 +1997,6 @@ document
 // AUTOCOMPLETE
 // ==================================================
 
-setupAutocomplete(
-  "casaSearch",
-  "casaSuggestions",
-  "Casa de Show"
-);
-
 
 setupAutocomplete(
   "endereco",
@@ -1973,3 +2033,656 @@ initDatePicker();
 // ==================================================
 
 loadShows();
+
+
+// ==================================================
+// PRICE FILTER
+// ==================================================
+
+function initializePriceFilter() {
+
+  const minRange =
+    document.getElementById(
+      "priceMinRange"
+    );
+
+
+  const maxRange =
+    document.getElementById(
+      "priceMaxRange"
+    );
+
+
+  /*
+   * If the HTML price elements
+   * don't exist, simply stop.
+   */
+
+  if (
+    !minRange ||
+    !maxRange
+  ) {
+
+    console.warn(
+      "Price filter elements not found."
+    );
+
+    return;
+
+  }
+
+
+  const prices =
+    allShows
+
+      .map(show =>
+        Number(
+          show["Preço do ingresso"]
+        )
+      )
+
+      .filter(price =>
+        Number.isFinite(price) &&
+        price >= 0
+      );
+
+
+  /*
+   * No prices in the spreadsheet.
+   */
+
+  if (
+    prices.length === 0
+  ) {
+
+    availableMinPrice = 0;
+
+    availableMaxPrice = 500;
+
+  } else {
+
+    availableMinPrice =
+      Math.floor(
+        Math.min(...prices)
+      );
+
+
+    availableMaxPrice =
+      Math.ceil(
+        Math.max(...prices)
+      );
+
+
+    /*
+     * Give the slider some
+     * room at the top.
+     */
+
+    availableMaxPrice =
+      Math.max(
+        100,
+        Math.ceil(
+          availableMaxPrice / 50
+        ) * 50
+      );
+
+  }
+
+
+  minRange.min =
+    availableMinPrice;
+
+
+  minRange.max =
+    availableMaxPrice;
+
+
+  minRange.value =
+    availableMinPrice;
+
+
+  maxRange.min =
+    availableMinPrice;
+
+
+  maxRange.max =
+    availableMaxPrice;
+
+
+  maxRange.value =
+    availableMaxPrice;
+
+
+  updatePriceUI();
+
+}
+
+
+
+
+// ==================================================
+// PRICE UI
+// ==================================================
+
+function updatePriceUI() {
+
+  const minRange =
+    document.getElementById(
+      "priceMinRange"
+    );
+
+
+  const maxRange =
+    document.getElementById(
+      "priceMaxRange"
+    );
+
+
+  const minInput =
+    document.getElementById(
+      "priceMinInput"
+    );
+
+
+  const maxInput =
+    document.getElementById(
+      "priceMaxInput"
+    );
+
+
+  const minLabel =
+    document.getElementById(
+      "priceMinLabel"
+    );
+
+
+  const maxLabel =
+    document.getElementById(
+      "priceMaxLabel"
+    );
+
+
+  const track =
+    document.getElementById(
+      "sliderTrack"
+    );
+
+
+  if (
+    !minRange ||
+    !maxRange
+  ) {
+
+    return;
+
+  }
+
+
+  let min =
+    Number(
+      minRange.value
+    );
+
+
+  let max =
+    Number(
+      maxRange.value
+    );
+
+
+  if (
+    min > max
+  ) {
+
+    min =
+      max;
+
+    minRange.value =
+      min;
+
+  }
+
+
+  priceMin =
+    min > availableMinPrice
+      ? min
+      : null;
+
+
+  priceMax =
+    max < availableMaxPrice
+      ? max
+      : null;
+
+
+  if (minInput) {
+
+    minInput.value =
+      priceMin === null
+        ? ""
+        : min;
+
+  }
+
+
+  if (maxInput) {
+
+    maxInput.value =
+      priceMax === null
+        ? ""
+        : max;
+
+  }
+
+
+  if (minLabel) {
+
+    minLabel.textContent =
+      `R$ ${formatMoney(min)}`;
+
+  }
+
+
+  if (maxLabel) {
+
+    maxLabel.textContent =
+      max === availableMaxPrice
+        ? `R$ ${formatMoney(max)}+`
+        : `R$ ${formatMoney(max)}`;
+
+  }
+
+
+  if (track) {
+
+    const total =
+      availableMaxPrice -
+      availableMinPrice;
+
+
+    if (
+      total > 0
+    ) {
+
+      const left =
+        (
+          (min -
+            availableMinPrice) /
+          total
+        ) * 100;
+
+
+      const right =
+        (
+          (max -
+            availableMinPrice) /
+          total
+        ) * 100;
+
+
+      track.style.left =
+        `${left}%`;
+
+
+      track.style.width =
+        `${right - left}%`;
+
+    }
+
+  }
+
+}
+
+
+
+
+// ==================================================
+// SLIDER TRACK
+// ==================================================
+
+function updateSliderTrack(
+  min,
+  max
+) {
+
+  const track =
+    document.getElementById(
+      "sliderTrack"
+    );
+
+
+  const total =
+    availableMaxPrice -
+    availableMinPrice;
+
+
+  if (
+    total <= 0
+  ) {
+
+    return;
+
+  }
+
+
+  const left =
+    (
+      (min -
+        availableMinPrice) /
+      total
+    ) * 100;
+
+
+  const right =
+    (
+      (max -
+        availableMinPrice) /
+      total
+    ) * 100;
+
+
+  track.style.left =
+    `${left}%`;
+
+
+  track.style.width =
+    `${right - left}%`;
+
+}
+
+
+
+// ==================================================
+// PRICE INPUTS
+// ==================================================
+
+function setupPriceFilter() {
+
+  const minRange =
+    document.getElementById(
+      "priceMinRange"
+    );
+
+
+  const maxRange =
+    document.getElementById(
+      "priceMaxRange"
+    );
+
+
+  const minInput =
+    document.getElementById(
+      "priceMinInput"
+    );
+
+
+  const maxInput =
+    document.getElementById(
+      "priceMaxInput"
+    );
+
+
+  /*
+   * Don't crash the whole page
+   * if the price HTML isn't present.
+   */
+
+  if (
+    !minRange ||
+    !maxRange ||
+    !minInput ||
+    !maxInput
+  ) {
+
+    console.warn(
+      "Price filter could not be initialized."
+    );
+
+    return;
+
+  }
+
+
+  minRange.addEventListener(
+    "input",
+    () => {
+
+      let min =
+        Number(
+          minRange.value
+        );
+
+
+      let max =
+        Number(
+          maxRange.value
+        );
+
+
+      if (
+        min > max
+      ) {
+
+        min =
+          max;
+
+        minRange.value =
+          min;
+
+      }
+
+
+      updatePriceUI();
+
+      applyFilters();
+
+    }
+  );
+
+
+  maxRange.addEventListener(
+    "input",
+    () => {
+
+      let min =
+        Number(
+          minRange.value
+        );
+
+
+      let max =
+        Number(
+          maxRange.value
+        );
+
+
+      if (
+        max < min
+      ) {
+
+        max =
+          min;
+
+        maxRange.value =
+          max;
+
+      }
+
+
+      updatePriceUI();
+
+      applyFilters();
+
+    }
+  );
+
+
+  minInput.addEventListener(
+    "input",
+    () => {
+
+      if (
+        minInput.value === ""
+      ) {
+
+        minRange.value =
+          availableMinPrice;
+
+        updatePriceUI();
+
+        applyFilters();
+
+        return;
+
+      }
+
+
+      let value =
+        Number(
+          minInput.value
+        );
+
+
+      if (
+        !Number.isFinite(value)
+      ) {
+
+        return;
+
+      }
+
+
+      value =
+        Math.max(
+          availableMinPrice,
+          Math.min(
+            value,
+            availableMaxPrice
+          )
+        );
+
+
+      const max =
+        Number(
+          maxRange.value
+        );
+
+
+      if (
+        value > max
+      ) {
+
+        value =
+          max;
+
+      }
+
+
+      minRange.value =
+        value;
+
+
+      updatePriceUI();
+
+      applyFilters();
+
+    }
+  );
+
+
+  maxInput.addEventListener(
+    "input",
+    () => {
+
+      if (
+        maxInput.value === ""
+      ) {
+
+        maxRange.value =
+          availableMaxPrice;
+
+        updatePriceUI();
+
+        applyFilters();
+
+        return;
+
+      }
+
+
+      let value =
+        Number(
+          maxInput.value
+        );
+
+
+      if (
+        !Number.isFinite(value)
+      ) {
+
+        return;
+
+      }
+
+
+      value =
+        Math.max(
+          availableMinPrice,
+          Math.min(
+            value,
+            availableMaxPrice
+          )
+        );
+
+
+      const min =
+        Number(
+          minRange.value
+        );
+
+
+      if (
+        value < min
+      ) {
+
+        value =
+          min;
+
+      }
+
+
+      maxRange.value =
+        value;
+
+
+      updatePriceUI();
+
+      applyFilters();
+
+    }
+  );
+
+}
+
+
+
+
+// ==================================================
+// MONEY FORMAT
+// ==================================================
+
+function formatMoney(
+  value
+) {
+
+  return Number(
+    value
+  ).toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }
+  );
+
+}

@@ -10,7 +10,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Rock Shows</title>
+  <title>Onde Tem Show na Cena?</title>
 
   <link
     rel="stylesheet"
@@ -27,7 +27,7 @@
 
   <div class="container">
 
-    <h1>🎸 Rock Shows</h1>
+    <h1>🎸 Onde Tem Show Na Cena?</h1>
 
     <p>
       Encontre os próximos shows
@@ -62,27 +62,6 @@
         </option>
 
       </select>
-
-    </div>
-
-
-    <div class="filter">
-
-      <label for="casaSearch">
-        Buscar Casa de Show
-      </label>
-
-      <input
-        id="casaSearch"
-        type="text"
-        placeholder="Digite o nome..."
-        autocomplete="off"
-      >
-
-      <div
-        id="casaSuggestions"
-        class="suggestions"
-      ></div>
 
     </div>
 
@@ -284,6 +263,95 @@
       ></div>
 
     </div>
+
+
+    <!-- PRECO DO INGRESSO -->
+
+    <div class="filter price-filter">
+
+  <label>
+    Preço inicial do ingresso
+  </label>
+
+
+  <div class="price-inputs">
+
+    <div>
+
+      <span>R$ mínimo</span>
+
+      <input
+        id="priceMinInput"
+        type="number"
+        min="0"
+        step="1"
+        placeholder="0"
+      >
+
+    </div>
+
+
+    <div>
+
+      <span>R$ máximo</span>
+
+      <input
+        id="priceMaxInput"
+        type="number"
+        min="0"
+        step="1"
+        placeholder="Máx."
+      >
+
+    </div>
+
+  </div>
+
+
+  <div class="price-slider">
+
+    <div
+      class="slider-track"
+      id="sliderTrack"
+    ></div>
+
+
+    <input
+      id="priceMinRange"
+      type="range"
+      min="0"
+      max="500"
+      value="0"
+      step="1"
+    >
+
+
+    <input
+      id="priceMaxRange"
+      type="range"
+      min="0"
+      max="500"
+      value="500"
+      step="1"
+    >
+
+  </div>
+
+
+  <div class="price-labels">
+
+    <span id="priceMinLabel">
+      R$ 0
+    </span>
+
+    <span id="priceMaxLabel">
+      R$ 500+
+    </span>
+
+  </div>
+
+</div>
+
 
 
   </section>
