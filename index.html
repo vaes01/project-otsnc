@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Rock Shows</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="container">
+      <h1>🎸 Rock Shows</h1>
+      <p>Encontre os próximos shows de rock</p>
+    </div>
+  </header>
+
+
+  <main class="container">
+
+    <!-- FILTERS -->
+
+    <section class="filters">
+
+      <div class="filter">
+        <label for="casa">Casa de Show</label>
+        <input
+          type="text"
+          id="casa"
+          placeholder="Digite o nome..."
+        >
+      </div>
+
+
+      <div class="filter">
+        <label for="cidade">Cidade</label>
+        <select id="cidade">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+
+      <div class="filter">
+        <label for="regiao">Região</label>
+        <select id="regiao">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+
+      <div class="filter">
+        <label for="bairro">Bairro</label>
+        <select id="bairro">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+
+      <div class="filter">
+        <label for="endereco">Endereço</label>
+        <input
+          type="text"
+          id="endereco"
+          placeholder="Digite o endereço..."
+        >
+      </div>
+
+
+      <div class="filter">
+        <label for="instagram">Instagram</label>
+        <input
+          type="text"
+          id="instagram"
+          placeholder="@..."
+        >
+      </div>
+
+
+      <div class="filter">
+        <label for="data">Data</label>
+        <input
+          type="date"
+          id="data"
+        >
+      </div>
+
+
+      <div class="filter">
+        <label for="horario">Horário</label>
+        <input
+          type="text"
+          id="horario"
+          placeholder="Ex: 20:00"
+        >
+      </div>
+
+
+      <div class="filter">
+        <label for="bandas">Bandas</label>
+        <input
+          type="text"
+          id="bandas"
+          placeholder="Nome da banda..."
+        >
+      </div>
+
+    </section>
+
+
+    <div class="filter-actions">
+
+      <button id="clearFilters">
+        Limpar filtros
+      </button>
+
+      <span id="resultCount"></span>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div id="loading">
+      Carregando shows...
+    </div>
+
+
+    <!-- SHOWS -->
+
+    <section id="shows" class="shows"></section>
+
+
+    <!-- NO RESULTS -->
+
+    <div id="noResults" class="no-results hidden">
+      Nenhum show encontrado.
+    </div>
+
+  </main>
+
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>
