@@ -1246,3 +1246,56 @@ body {
   }
 
 }
+
+
+/* =========================================
+   VENUE REGISTRATION LINK
+========================================= */
+
+.venue-registration {
+  display: inline-block;
+
+  margin-top: 18px;
+
+  padding: 11px 18px;
+
+  background: #e10600;
+
+  color: #fff;
+
+  text-decoration: none;
+
+  border-radius: 6px;
+
+  font-size: 14px;
+
+  font-weight: bold;
+
+  transition:
+    background .2s,
+    transform .2s;
+}
+
+
+.venue-registration:hover {
+  background: #ff1a14;
+
+  transform:
+    translateY(-2px);
+}
+
+
+@media (max-width: 600px) {
+
+  .venue-registration {
+    display: block;
+
+    width: 100%;
+
+    text-align: center;
+
+    margin-top: 18px;
+  }
+
+}
+

@@ -1033,7 +1033,7 @@ function renderShows(
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Instagram
+                  📸Instagram
                 </a>
               `
               : ""
