@@ -1484,3 +1484,64 @@ body {
   }
 
 }
+
+
+
+/* =========================================
+   INSTAGRAM CONTACT
+========================================= */
+
+.instagram-contact {
+  display: inline-block;
+
+  margin-top: 10px;
+
+  padding: 10px 16px;
+
+  color: #ff5b5b;
+
+  border: 1px solid #444;
+  border-radius: 6px;
+
+  background: transparent;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  transition:
+    background-color .2s,
+    border-color .2s,
+    color .2s,
+    transform .2s;
+}
+
+.instagram-contact:hover {
+  background-color: #1b1b1b;
+
+  border-color: #ff5b5b;
+
+  color: #ff7777;
+
+  transform: translateY(-2px);
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+  .instagram-contact {
+    display: block;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    text-align: center;
+  }
+
+}
