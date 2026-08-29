@@ -122,6 +122,11 @@ function getFilters() {
       document
         .getElementById("casaSelect")
         .value,
+    
+    estado:
+      document
+        .getElementById("estado")
+        .value,
 
     cidade:
       document
@@ -137,13 +142,6 @@ function getFilters() {
       document
         .getElementById("bairro")
         .value,
-
-    endereco:
-      document
-        .getElementById("endereco")
-        .value
-        .toLowerCase()
-        .trim(),
 
     horario:
       document
@@ -211,6 +209,10 @@ function matchesFilters(
       show["Casa de Show"] || ""
     );
 
+  const estado =
+  String(
+    show["Estado"] || ""
+  );
 
   const cidade =
     String(
@@ -228,13 +230,6 @@ function matchesFilters(
     String(
       show["Bairro"] || ""
     );
-
-
-  const endereco =
-    String(
-      show["Endereço"] || ""
-    )
-      .toLowerCase();
 
 
   const horario =
@@ -263,6 +258,16 @@ function matchesFilters(
 
   }
 
+  // ESTADO
+
+if (
+  filters.estado &&
+  estado !== filters.estado
+) {
+
+  return false;
+
+}
 
 
   // CIDADE
@@ -301,22 +306,6 @@ function matchesFilters(
     return false;
 
   }
-
-
-
-  // ENDERECO
-
-  if (
-    filters.endereco &&
-    !endereco.includes(
-      filters.endereco
-    )
-  ) {
-
-    return false;
-
-  }
-
 
 
   // HORARIO
@@ -430,6 +419,13 @@ function updateAllFilters() {
     "Casa de Show",
     filters,
     "casa"
+  );
+
+  updateSelect(
+    "estado",
+    "Estado",
+    filters,
+    "estado"
   );
 
 
@@ -930,23 +926,45 @@ function renderShows(
           </h2>
 
 
-          <div class="show-info">
+<div class="show-info">
 
-            📍
-            ${escapeHTML(
-              show["Cidade"] || ""
-            )}
+  📍
 
-            ${
-              show["Região"]
-                ? " • " +
-                  escapeHTML(
-                    show["Região"]
-                  )
-                : ""
-            }
+  ${
+    show["Estado"]
+      ? escapeHTML(
+          show["Estado"]
+        )
+      : ""
+  }
 
-          </div>
+  ${
+    show["Cidade"]
+      ? (
+          show["Estado"] ? " • " : ""
+        ) +
+        escapeHTML(
+          show["Cidade"]
+        )
+      : ""
+  }
+
+  ${
+    show["Região"]
+      ? (
+          show["Estado"] ||
+          show["Cidade"]
+            ? " • "
+            : ""
+        ) +
+        escapeHTML(
+          show["Região"]
+        )
+      : ""
+  }
+
+</div>
+
 
 
           ${
@@ -1996,13 +2014,6 @@ document
 // ==================================================
 // AUTOCOMPLETE
 // ==================================================
-
-
-setupAutocomplete(
-  "endereco",
-  "enderecoSuggestions",
-  "Endereço"
-);
 
 
 setupAutocomplete(
